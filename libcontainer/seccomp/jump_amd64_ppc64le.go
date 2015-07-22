@@ -1,4 +1,5 @@
-// +build linux,amd64
+// +build linux
+// +build amd64 ppc64le
 
 package seccomp
 
