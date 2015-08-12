@@ -1,4 +1,4 @@
-// +build linux,!go1.5
+// +build linux,!go1.5 linux,gccgo
 
 package libcontainer
 
