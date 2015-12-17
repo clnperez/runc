@@ -8,6 +8,9 @@ import (
 	"github.com/vishvananda/netlink/nl"
 )
 
+// #include <linux/netlink.h>
+import "C"
+
 // list of known message types we want to send to bootstrap program
 // The number is randomly chosen to not conflict with known netlink types
 const (
@@ -34,7 +37,7 @@ func (msg *Int32msg) Serialize() []byte {
 }
 
 func (msg *Int32msg) Len() int {
-	return syscall.NLA_HDRLEN + 4
+	return C.NLA_HDRLEN + 4
 }
 
 // bytemsg has the following representation
@@ -56,5 +59,5 @@ func (msg *Bytemsg) Serialize() []byte {
 }
 
 func (msg *Bytemsg) Len() int {
-	return syscall.NLA_HDRLEN + len(msg.Value) + 1 // null-terminated
+	return C.NLA_HDRLEN + len(msg.Value) + 1 // null-terminated
 }
