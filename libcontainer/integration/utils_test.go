@@ -11,12 +11,13 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
-	"syscall"
 	"testing"
 	"time"
 
 	"github.com/opencontainers/runc/libcontainer"
 	"github.com/opencontainers/runc/libcontainer/configs"
+
+	"golang.org/x/sys/unix"
 )
 
 func newStdBuffers() *stdBuffers {
@@ -158,7 +159,7 @@ func runContainer(config *configs.Config, console string, args ...string) (buffe
 	if err != nil {
 		return buffers, -1, err
 	}
-	status := ps.Sys().(syscall.WaitStatus)
+	status := ps.Sys().(unix.WaitStatus)
 	if status.Exited() {
 		exitCode = status.ExitStatus()
 	} else if status.Signaled() {

@@ -5,7 +5,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"syscall"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/opencontainers/runc/libcontainer"
@@ -13,6 +12,8 @@ import (
 	"github.com/opencontainers/runc/libcontainer/specconv"
 	"github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/urfave/cli"
+
+	"golang.org/x/sys/unix"
 )
 
 var restoreCommand = cli.Command{
@@ -189,7 +190,7 @@ func restoreContainer(context *cli.Context, spec *specs.Spec, config *configs.Co
 	}
 	if pidFile := context.String("pid-file"); pidFile != "" {
 		if err := createPidFile(pidFile, process); err != nil {
-			_ = process.Signal(syscall.SIGKILL)
+			_ = process.Signal(unix.SIGKILL)
 			_, _ = process.Wait()
 			return -1, err
 		}

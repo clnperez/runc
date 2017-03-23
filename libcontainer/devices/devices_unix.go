@@ -8,9 +8,10 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"syscall"
 
 	"github.com/opencontainers/runc/libcontainer/configs"
+
+	"golang.org/x/sys/unix"
 )
 
 var (
@@ -38,13 +39,13 @@ func DeviceFromPath(path, permissions string) (*configs.Device, error) {
 	case mode&os.ModeDevice == 0:
 		return nil, ErrNotADevice
 	case mode&os.ModeCharDevice != 0:
-		fileModePermissionBits |= syscall.S_IFCHR
+		fileModePermissionBits |= unix.S_IFCHR
 		devType = 'c'
 	default:
-		fileModePermissionBits |= syscall.S_IFBLK
+		fileModePermissionBits |= unix.S_IFBLK
 		devType = 'b'
 	}
-	stat_t, ok := fileInfo.Sys().(*syscall.Stat_t)
+	stat_t, ok := fileInfo.Sys().(*unix.Stat_t)
 	if !ok {
 		return nil, fmt.Errorf("cannot determine the device number for device %s", path)
 	}

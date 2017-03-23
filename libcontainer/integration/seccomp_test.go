@@ -4,12 +4,13 @@ package integration
 
 import (
 	"strings"
-	"syscall"
 	"testing"
 
 	"github.com/opencontainers/runc/libcontainer"
 	"github.com/opencontainers/runc/libcontainer/configs"
 	libseccomp "github.com/seccomp/libseccomp-golang"
+
+	"golang.org/x/sys/unix"
 )
 
 func TestSeccompDenyGetcwd(t *testing.T) {
@@ -60,7 +61,7 @@ func TestSeccompDenyGetcwd(t *testing.T) {
 	}
 
 	var exitCode int
-	status := ps.Sys().(syscall.WaitStatus)
+	status := ps.Sys().(unix.WaitStatus)
 	if status.Exited() {
 		exitCode = status.ExitStatus()
 	} else if status.Signaled() {
@@ -197,7 +198,7 @@ func TestSeccompDenyWriteConditional(t *testing.T) {
 	}
 
 	var exitCode int
-	status := ps.Sys().(syscall.WaitStatus)
+	status := ps.Sys().(unix.WaitStatus)
 	if status.Exited() {
 		exitCode = status.ExitStatus()
 	} else if status.Signaled() {

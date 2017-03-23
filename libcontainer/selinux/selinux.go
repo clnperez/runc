@@ -14,9 +14,10 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-	"syscall"
 
 	"github.com/opencontainers/runc/libcontainer/system"
+
+	"golang.org/x/sys/unix"
 )
 
 const (
@@ -125,8 +126,8 @@ func (s *selinuxState) getSELinuxfs() string {
 	}
 
 	if selinuxfs != "" {
-		var buf syscall.Statfs_t
-		syscall.Statfs(selinuxfs, &buf)
+		var buf unix.Statfs_t
+		unix.Statfs(selinuxfs, &buf)
 		if (buf.Flags & stRdOnly) == 1 {
 			selinuxfs = ""
 		}
@@ -225,16 +226,16 @@ func Getfilecon(path string) (string, error) {
 }
 
 func Setfscreatecon(scon string) error {
-	return writeCon(fmt.Sprintf("/proc/self/task/%d/attr/fscreate", syscall.Gettid()), scon)
+	return writeCon(fmt.Sprintf("/proc/self/task/%d/attr/fscreate", unix.Gettid()), scon)
 }
 
 func Getfscreatecon() (string, error) {
-	return readCon(fmt.Sprintf("/proc/self/task/%d/attr/fscreate", syscall.Gettid()))
+	return readCon(fmt.Sprintf("/proc/self/task/%d/attr/fscreate", unix.Gettid()))
 }
 
 // Getcon returns the SELinux label of the current process thread, or an error.
 func Getcon() (string, error) {
-	return readCon(fmt.Sprintf("/proc/self/task/%d/attr/current", syscall.Gettid()))
+	return readCon(fmt.Sprintf("/proc/self/task/%d/attr/current", unix.Gettid()))
 }
 
 // Getpidcon returns the SELinux label of the given pid, or an error.
@@ -243,7 +244,7 @@ func Getpidcon(pid int) (string, error) {
 }
 
 func Getexeccon() (string, error) {
-	return readCon(fmt.Sprintf("/proc/self/task/%d/attr/exec", syscall.Gettid()))
+	return readCon(fmt.Sprintf("/proc/self/task/%d/attr/exec", unix.Gettid()))
 }
 
 func writeCon(name string, val string) error {
@@ -262,7 +263,7 @@ func writeCon(name string, val string) error {
 }
 
 func Setexeccon(scon string) error {
-	return writeCon(fmt.Sprintf("/proc/self/task/%d/attr/exec", syscall.Gettid()), scon)
+	return writeCon(fmt.Sprintf("/proc/self/task/%d/attr/exec", unix.Gettid()), scon)
 }
 
 func (c SELinuxContext) Get() string {
