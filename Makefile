@@ -76,7 +76,7 @@ man:
 	man/md2man-all.sh
 
 runcimage:
-	docker build -t $(RUNC_IMAGE) .
+	docker build -t $(RUNC_IMAGE) -f Dockerfile.ppc64le .
 
 test:
 	make unittest integration rootlessintegration
